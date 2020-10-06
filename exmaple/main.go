@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	scrapy2 "github.com/crashiura/scrapy"
@@ -26,6 +27,7 @@ func main() {
 	}
 
 	sc.Run()
+	sc.ShutdownAfter(time.Second*3)
 	sc.Wait()
 }
 

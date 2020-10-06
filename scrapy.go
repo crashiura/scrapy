@@ -102,6 +102,16 @@ func (s *Scrapy) Wait() {
 	s.wg.Wait()
 }
 
+func (s *Scrapy) ShutdownAfter(t time.Duration)  {
+	go func() {
+		for range time.NewTicker(t).C {
+			if 0 <= s.Queue.Len() {
+				s.Shutdown()
+			}
+		}
+	}()
+}
+
 func (s *Scrapy) runWorkers(ctx context.Context, wg *sync.WaitGroup) {
 	for i := 0; i < s.Threads; i++ {
 		wg.Add(1)
@@ -147,9 +157,10 @@ func (s *Scrapy) work(ctx context.Context, wg *sync.WaitGroup) {
 				doc, err := goquery.NewDocumentFromReader(res.Body)
 				if err != nil {
 					log.Println("Error create html document ", err)
-					//if err != res.Body.Close() {
-					//	return err
-					//}
+					if err != res.Body.Close() {
+						log.Println(err)
+						//return err
+					}
 
 					continue
 				}
