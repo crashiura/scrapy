@@ -102,10 +102,10 @@ func (s *Scrapy) Wait() {
 	s.wg.Wait()
 }
 
-func (s *Scrapy) ShutdownAfter(t time.Duration)  {
+func (s *Scrapy) ShutdownAfter(t time.Duration) {
 	go func() {
 		for range time.NewTicker(t).C {
-			if 0 <= s.Queue.Len() {
+			if s.Queue.Len() <= 0 {
 				s.Shutdown()
 			}
 		}
